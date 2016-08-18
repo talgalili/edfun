@@ -1,0 +1,17 @@
+Package: edfun
+Type: Package
+Title: Creating Empirical Distribution Functions
+Version: 0.1.0
+Date: 2016-08-18
+Authors@R: c(person("Tal", "Galili", role = c("aut", "cre", "cph"), email =
+    "tal.galili@gmail.com", comment = "https://www.r-statistics.com"))
+Description: Creating empirical distribution functions from data: dfun, pfun,
+    qfun and rfun.
+VignetteBuilder: knitr
+License: GPL-2 | GPL-3
+URL: https://cran.r-project.org/package=edfun,
+    https://github.com/talgalili/edfun/,
+    http://www.r-statistics.com/tag/edfun/
+BugReports: https://github.com/talgalili/edfun/issues
+LazyData: TRUE
+RoxygenNote: 5.0.1
