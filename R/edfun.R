@@ -27,24 +27,28 @@
 
 
 
-#' Creating Empirical Distribution Functions
-#'
-#' @param x numeric vector of data
+#' @title Creating Empirical Distribution Functions
+#' @export
+#' @param x numeric vector of data or (in case density is not NULL) a sequance of values
+#' for which to evaluate the density function for creating the inv-CDF.
+#' Also, the rfun will be based on the inverse CDF on uniform distribution (inv-CDF(U[0,1]) -
+#' which is "better" than using \link{sample}, if we have the density).
 #' @param support a 2d numeric vector giving the boundaries of the distribution.
 #' Default is the range of x.
 #' This is used in qfun to decide how to work with extreme cases of q->0|1.
+#' @param dfun a density function. If supplied, this
+#' creates a different pfun (which now relies on \link{integrate}) and rfun (which will now rely on inv-CDF(U[0,1])).
 #' @param qfun_method can get a quantile function to use (for example "quantile"),
 #' with the first parameter accepts the data (x) and the second accepts probs (numeric vector of probabilities with values in [0,1]).
 #' If it is NULL (the default) then the quantiles are estimated using \link{approxfun} from
 #' predicting the x values from the pfun(x) values.
-#' @param ...
+#' @param ... ignored
 #'
 #'
 #'
 #' @return
 #' A list with 4 components: dfun, pfun, qfun and rfun.
 #' Each one is a function to perform the usual tasks of distributions.
-#' @export
 #'
 #' @examples
 #'
@@ -69,7 +73,10 @@
 #' f <- x_funs$rfun
 #' hist(f(1000))
 #'
+#'
+#'
 edfun <- function(x, support = range(x), # c(-Inf, Inf),
+                  dfun = NULL,
                   qfun_method = NULL,
                   ...) {
 
@@ -87,29 +94,30 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
     }
   }
 
-  if(!is.null(support)) {
-    if(length(support) != 2L) {
-      warning("support must be a 2d numeric vector. Since it is not, it is ignored.")
-      support <- range(x)
-    } else {
-      x_range <- range(x)
-      if(support[1] > x_range[1] | support[2] < x_range[2]) {
-        warning("The range of x must be within the support. Since it is not, support is ignored.")
-        support <- NULL
-      }
-    }
-  }
+  # check density is o.k.
+  if(!is.null(dfun) & !is.function(dfun)) stop("density must either be NULL or a function.")
 
-
+  dfun_by_user <- is.function(dfun) # did the user input dfun?
 
   # create density
 
-  density_x <- density(x)
-  dapproxfun <- approxfun(x = density_x$x, y = density_x$y)
-  dfun <- function(x) dapproxfun(x)
+  if(dfun_by_user) {
+    # dfun <- dfun # redundent
+  } else {
+    density_x <- density(x)
+    dapproxfun <- approxfun(x = density_x$x, y = density_x$y)
+    dfun <- function(x) dapproxfun(x)
+  }
 
   # create CDF
-  pfun <- ecdf(x)
+  if(dfun_by_user) {
+    # min_x <- min(x)
+    pfun_1 <- function(v) integrate(dfun, support[1], v)$value
+    pfun <- function(x) Vectorize(pfun_1)(x)
+  } else {
+    pfun <- ecdf(x)
+  }
+
 
   # or this: (but it would be MUCH slower)
   # qfun <- quantile(x, q)
@@ -117,6 +125,7 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
   # create inverse-CDF
   if(is.null(qfun_method)) {
+
     qfun <- approxfun(x = pfun(x), y = x, yleft = support[1], yright = support[2]) # if support is NULL than no problem
   } else {
     if(!is.function(qfun_method)) stop("qfun_method must be a (quantile) function.")
@@ -137,7 +146,13 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
 
   # create RNG
-  rfun <- function(n) sample(x, size = n, replace = TRUE)
+  if(dfun_by_user) {
+    rfun <- function(n) qfun(runif(n)) #inv-CDF on U(0,1)
+  } else {
+    rfun <- function(n) sample(x, size = n, replace = TRUE)
+  }
+
+
 
 
 
@@ -150,7 +165,5 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
 
 
-# x <- 1:100000
-# microbenchmark::microbenchmark(c(x,1), c(x, NULL))
 
 

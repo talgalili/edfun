@@ -4,28 +4,31 @@
 \alias{edfun}
 \title{Creating Empirical Distribution Functions}
 \usage{
-edfun(x, support = range(x), qfun_method = NULL, ...)
+edfun(x, support = range(x), dfun = NULL, qfun_method = NULL, ...)
 }
 \arguments{
-\item{x}{numeric vector of data}
+\item{x}{numeric vector of data or (in case density is not NULL) a sequance of values
+for which to evaluate the density function for creating the inv-CDF.
+Also, the rfun will be based on the inverse CDF on uniform distribution (inv-CDF(U[0,1]) -
+which is "better" than using \link{sample}, if we have the density).}
 
 \item{support}{a 2d numeric vector giving the boundaries of the distribution.
 Default is the range of x.
 This is used in qfun to decide how to work with extreme cases of q->0|1.}
+
+\item{dfun}{a density function. If supplied, this
+creates a different pfun (which now relies on \link{integrate}) and rfun (which will now rely on inv-CDF(U[0,1])).}
 
 \item{qfun_method}{can get a quantile function to use (for example "quantile"),
 with the first parameter accepts the data (x) and the second accepts probs (numeric vector of probabilities with values in [0,1]).
 If it is NULL (the default) then the quantiles are estimated using \link{approxfun} from
 predicting the x values from the pfun(x) values.}
 
-\item{...}{}
+\item{...}{ignored}
 }
 \value{
 A list with 4 components: dfun, pfun, qfun and rfun.
 Each one is a function to perform the usual tasks of distributions.
-}
-\description{
-Creating Empirical Distribution Functions
 }
 \examples{
 
@@ -49,6 +52,8 @@ curve(f, 0,1)
 
 f <- x_funs$rfun
 hist(f(1000))
+
+
 
 }
 
