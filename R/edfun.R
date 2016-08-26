@@ -6,9 +6,12 @@
 
 
 
-#' Title
+#' Creating Empirical Distribution Functions
 #'
 #' @param x numeric vector of data
+#' @param support a 2d numeric vector giving the boundaries of the distribution.
+#' Default is the range of x.
+#' This is used in qfun to decide how to work with extreme cases of q->0|1.
 #' @param ...
 #'
 #' @return
@@ -21,6 +24,11 @@
 #' set.seed(2016-08-18)
 #' x <- rnorm(100)
 #' x_funs <- edfun(x)
+#' x_funs$qfun(0) # -2.6
+#'
+#' # for extreme cases, we can add the support vector
+#' x_funs <- edfun(x, support = c(-Inf, Inf))
+#' x_funs$qfun(0) # -Inf
 #'
 #' f <- x_funs$dfun
 #' curve(f, -2,2)
@@ -34,21 +42,56 @@
 #' f <- x_funs$rfun
 #' hist(f(1000))
 #'
-#'
-edfun <- function(x, ...) {
+edfun <- function(x, support = range(x), # c(-Inf, Inf),
+                  ...) {
 
 
+  # check support is o.k.
+
+  if(!is.null(support)) {
+    if(length(support) != 2L) {
+      warning("support must be a 2d numeric vector. Since it is not, it is ignored.")
+      support <- NULL
+    } else {
+      x_range <- range(x)
+      if(support[1] > x_range[1] | support[2] < x_range[2]) {
+        warning("The range of x must be within the support. Since it is not, support is ignored.")
+        support <- NULL
+      }
+    }
+  }
+
+
+
+  # create density
 
   density_x <- density(x)
   dapproxfun <- approxfun(x = density_x$x, y = density_x$y)
   dfun <- function(x) dapproxfun(x)
 
-  pfun = ecdf(x)
+  # create CDF
+  pfun <- ecdf(x)
 
   # or this: (but it would be MUCH slower)
   # qfun <- quantile(x, q)
-  qfun <- approxfun(x = pfun(x), y = x)
 
+
+  # create inverse-CDF
+  qfun <- approxfun(x = pfun(x), y = x, yleft = support[1], yright = support[2]) # if support is NULL than no problem
+  # # curve(qfun,0,1)
+  ### not needed:
+  # if(!is.null(support)) {
+  #   qfun_data <- qfun
+  #   qfun <- function(v) {
+  #     out <- qfun_data(v)
+  #     out <- ifelse(v == 0L, support[1], out)
+  #     out <- ifelse(v == 1L, support[2], out)
+  #     out
+  #   }
+  # }
+
+
+  # create RNG
   rfun <- function(n) sample(x, size = n, replace = TRUE)
 
 
@@ -58,3 +101,11 @@ edfun <- function(x, ...) {
        qfun = qfun,
        rfun = rfun)
 }
+
+
+
+
+# x <- 1:100000
+# microbenchmark::microbenchmark(c(x,1), c(x, NULL))
+
+
