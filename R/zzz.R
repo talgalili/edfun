@@ -23,7 +23,9 @@
 # git remote add origin https://github.com/talgalili/edfun.git
 # git push -u origin master
 
-
+# to stop getting a prompt for u/p type in the shell:
+# git config remote.origin.url git@github.com:talgalili/edfun.git
+      # source: https://www.r-bloggers.com/rstudio-pushing-to-github-with-ssh-authentication/
 
 
 
