@@ -27,8 +27,13 @@ predicting the x values from the pfun(x) values.}
 \item{...}{ignored}
 }
 \value{
-A list with 4 components: dfun, pfun, qfun and rfun.
-Each one is a function to perform the usual tasks of distributions.
+A list with 4+ components: dfun, pfun, qfun and rfun.
+The 5th componont is pfun_integrate_dfun which is NUNLL if dfun is not supplied.
+If it is supplied, it returns a function that relies on \link{integrate} of dfun for
+returning pfun. Since this method is VERY slow, it is not returned within pfun.
+Instead, pfun will pre-compute pfun_integrate_dfun on all values of x.
+
+Each component is a function to perform the usual tasks of distributions.
 }
 \examples{
 

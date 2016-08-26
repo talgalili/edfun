@@ -28,6 +28,8 @@ As mentioned in [CRAN Task View: Probability Distributions](https://cran.r-proje
 
 This package aims to easily wrap these into a single function `edfun` (short for Empirical Distribution FUNctions). Also, since quantile is generally a slow function to perform, the default for creating a quantile function (inverse-CDF) is by approximating the function of predicting the data values (x) from their quantiles (CDF). This is done using the `approxfun` function. It takes a bit longer to create qfun, but it is MUCH faster to run than quantile (and is thus much better for simulations). Special care is taken for dealing with the support of the distribution (if it is known upfront).
 
+The added speed allows to use these functions to run simulation studies for unusual distributions.
+
 ## Installation
 
 To install the stable version on CRAN:
@@ -75,7 +77,7 @@ new_x <- x_dist$rfun(1000)
 hist(new_x)
 ```
 
-This is especially useful for cases where we can simulate numbers, but don't have their CDF or inv-CDF. For example, for the double exponential distribution, or a bi-modal normal distribution.
+This is especially useful for cases where we can simulate numbers or have their density, but don't have their CDF or inv-CDF. For example, for the double exponential distribution, or a bi-modal normal distribution.
 
 
 

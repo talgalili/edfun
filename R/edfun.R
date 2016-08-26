@@ -47,8 +47,13 @@
 #'
 #'
 #' @return
-#' A list with 4 components: dfun, pfun, qfun and rfun.
-#' Each one is a function to perform the usual tasks of distributions.
+#' A list with 4+ components: dfun, pfun, qfun and rfun.
+#' The 5th componont is pfun_integrate_dfun which is NUNLL if dfun is not supplied.
+#' If it is supplied, it returns a function that relies on \link{integrate} of dfun for
+#' returning pfun. Since this method is VERY slow, it is not returned within pfun.
+#' Instead, pfun will pre-compute pfun_integrate_dfun on all values of x.
+#'
+#' Each component is a function to perform the usual tasks of distributions.
 #'
 #' @examples
 #'
@@ -99,8 +104,7 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
   dfun_by_user <- is.function(dfun) # did the user input dfun?
 
-  # create density
-
+  # create density - dfun
   if(dfun_by_user) {
     # dfun <- dfun # redundent
   } else {
@@ -109,12 +113,14 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
     dfun <- function(x) dapproxfun(x)
   }
 
-  # create CDF
+  # create CDF - pfun
   if(dfun_by_user) {
     # min_x <- min(x)
-    pfun_1 <- function(v) integrate(dfun, support[1], v)$value
-    pfun <- function(x) Vectorize(pfun_1)(x)
+    pfun_integrate_dfun_1 <- function(v) integrate(dfun, support[1], v)$value
+    pfun_integrate_dfun <- function(x) Vectorize(pfun_integrate_dfun_1)(x)
+    pfun <- approxfun(x = x, y = pfun_integrate_dfun(x), yleft = 0L, yright = 1L)
   } else {
+    pfun_integrate_dfun <- NULL
     pfun <- ecdf(x)
   }
 
@@ -125,7 +131,6 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
   # create inverse-CDF
   if(is.null(qfun_method)) {
-
     qfun <- approxfun(x = pfun(x), y = x, yleft = support[1], yright = support[2]) # if support is NULL than no problem
   } else {
     if(!is.function(qfun_method)) stop("qfun_method must be a (quantile) function.")
@@ -159,7 +164,8 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
   list(dfun = dfun,
        pfun = pfun,
        qfun = qfun,
-       rfun = rfun)
+       rfun = rfun,
+       pfun_integrate_dfun = pfun_integrate_dfun)
 }
 
 
@@ -167,3 +173,60 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
 
 
+
+
+
+
+
+
+#
+# #### timing - when knowing the dfun vs when not.
+# if(FALSE) {
+#
+#   # checking speeds of when dfun is known or not.
+#
+#   set.seed(2016-08-18)
+#   x_simu <- rnorm(1e3)
+#   x_funs_simu <- edfun(x_simu, support = c(-Inf, Inf))
+#
+#
+#   x <- seq(-4,4, length.out = 1e3)
+#   x_funs <- edfun(x, dfun = dnorm, support = c(-Inf, Inf))
+#   x_funs$qfun(0) # -Inf
+#
+#   # precision - qfun
+#   q_to_test <- seq(0.001,.999, length.out = 100)
+#   edfun_out <- x_funs$qfun(q_to_test) # -4
+#   edfun_simu_out <- x_funs_simu$qfun(q_to_test) # -4
+#   real_out <- qnorm(q_to_test)
+#
+#   mean(abs(edfun_out-real_out))
+#   mean(abs(edfun_simu_out-real_out)) # quite terrible compared to when knowing dfun
+#
+#   library(microbenchmark)
+#   microbenchmark(dfun_known = x_funs$qfun(q_to_test),
+#                  dfun_NOT_known = x_funs_simu$qfun(q_to_test))
+#   # same time for the q function!
+#
+#
+#   # precision - pfun
+#   q_to_test <- seq(-3,3, length.out = 100)
+#   edfun_out <- x_funs$pfun(q_to_test) # -4
+#   edfun_simu_out <- x_funs_simu$pfun(q_to_test) # -4
+#   real_out <- pnorm(q_to_test)
+#
+#   mean(abs(edfun_out-real_out))
+#   mean(abs(edfun_simu_out-real_out)) # quite terrible compared to when knowing dfun
+#
+#   library(microbenchmark)
+#   microbenchmark(dfun_known = x_funs$pfun(q_to_test),
+#                  dfun_NOT_known = x_funs_simu$pfun(q_to_test))
+#   # same time for the p function!
+#
+#
+#   # timing for the rfun
+#   library(microbenchmark)
+#   microbenchmark(dfun_known = x_funs$rfun(100),
+#                  dfun_NOT_known = x_funs_simu$rfun(100))
+#   # this rfun is slower...
+# }
