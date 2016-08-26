@@ -79,10 +79,6 @@ This is especially useful for cases where we can simulate numbers, but don't hav
 
 
 
-**For more (interactive) examples see the [online vignette on CRAN](https://cran.r-project.org/web/packages/edfun/vignettes/edfun.html)**
-
-
-
 ## Credit
 
 This package is thanks to the amazing work done by MANY people in the (open source) R community.
