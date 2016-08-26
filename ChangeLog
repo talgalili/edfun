@@ -1,0 +1,27 @@
+* 2016-08-26(Tal Galili) README, NEWS, CONDUCT, travis. |853601e| 
+|  .travis.yml |   9 +++++
+|  CONDUCT.md  |  25 +++++++++++++
+|  DESCRIPTION |   2 +-
+|  NEWS        |  11 ++++++
+|  README.md   | 111 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+|  5 files changed, 157 insertions(+), 1 deletion(-)
+
+* 2016-08-26(Tal Galili) Added qfun_method parameter - to allow the use of the quantile function instead of the current default (approxfun). |e006321| 
+|  R/edfun.R    | 15 ++++++++++++++-
+|  man/edfun.Rd |  7 ++++++-
+|  2 files changed, 20 insertions(+), 2 deletions(-)
+
+* 2016-08-26(Tal Galili) Added the "support" parameter - to help qfun deal with values of 0L and 1L. |2a9199c| 
+|  R/edfun.R    | 61 +++++++++++++++++++++++++++++++++++++++++++++++++++++-----
+|  man/edfun.Rd | 16 +++++++++++----
+|  2 files changed, 68 insertions(+), 9 deletions(-)
+
+* 2016-08-18(Tal Galili) First rough version of edfun |64f40b1  
+   .Rbuildignore |  2 ++
+   .gitignore    |  4 ++++
+   DESCRIPTION   | 17 ++++++++++++++++
+   NAMESPACE     |  3 +++
+   R/edfun.R     | 60 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+   edfun.Rproj   | 21 ++++++++++++++++++++
+   man/edfun.Rd  | 41 +++++++++++++++++++++++++++++++++++++++
+   7 files changed, 148 insertions(+)
