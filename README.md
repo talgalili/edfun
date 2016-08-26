@@ -24,7 +24,7 @@ This package is still under active development. If you have features you would l
 
 As mentioned in [CRAN Task View: Probability Distributions](https://cran.r-project.org/web/views/Distributions.html)
 
-: Empirical distribution : Base R provides functions for univariate analysis: (1) the empirical density (see density()), (2) the empirical cumulative distribution function (see ecdf()), (3) the empirical quantile (see quantile()) and (4) random sampling (see sample()).
+> Empirical distribution : Base R provides functions for univariate analysis: (1) the empirical density (see density()), (2) the empirical cumulative distribution function (see ecdf()), (3) the empirical quantile (see quantile()) and (4) random sampling (see sample()).
 
 This package aims to easily wrap these into a single function `edfun` (short for Empirical Distribution FUNctions). Also, since quantile is generally a slow function to perform, the default for creating a quantile function (inverse-CDF) is by approximating the function of predicting the data values (x) from their quantiles (CDF). This is done using the `approxfun` function. It takes a bit longer to create qfun, but it is MUCH faster to run than quantile (and is thus much better for simulations). Special care is taken for dealing with the support of the distribution (if it is known upfront).
 
