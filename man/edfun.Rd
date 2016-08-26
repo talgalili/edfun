@@ -4,7 +4,7 @@
 \alias{edfun}
 \title{Creating Empirical Distribution Functions}
 \usage{
-edfun(x, support = range(x), ...)
+edfun(x, support = range(x), qfun_method = NULL, ...)
 }
 \arguments{
 \item{x}{numeric vector of data}
@@ -12,6 +12,11 @@ edfun(x, support = range(x), ...)
 \item{support}{a 2d numeric vector giving the boundaries of the distribution.
 Default is the range of x.
 This is used in qfun to decide how to work with extreme cases of q->0|1.}
+
+\item{qfun_method}{can get a quantile function to use (for example "quantile"),
+with the first parameter accepts the data (x) and the second accepts probs (numeric vector of probabilities with values in [0,1]).
+If it is NULL (the default) then the quantiles are estimated using \link{approxfun} from
+predicting the x values from the pfun(x) values.}
 
 \item{...}{}
 }

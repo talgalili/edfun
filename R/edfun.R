@@ -12,7 +12,13 @@
 #' @param support a 2d numeric vector giving the boundaries of the distribution.
 #' Default is the range of x.
 #' This is used in qfun to decide how to work with extreme cases of q->0|1.
+#' @param qfun_method can get a quantile function to use (for example "quantile"),
+#' with the first parameter accepts the data (x) and the second accepts probs (numeric vector of probabilities with values in [0,1]).
+#' If it is NULL (the default) then the quantiles are estimated using \link{approxfun} from
+#' predicting the x values from the pfun(x) values.
 #' @param ...
+#'
+#'
 #'
 #' @return
 #' A list with 4 components: dfun, pfun, qfun and rfun.
@@ -43,6 +49,7 @@
 #' hist(f(1000))
 #'
 edfun <- function(x, support = range(x), # c(-Inf, Inf),
+                  qfun_method = NULL,
                   ...) {
 
 
@@ -77,7 +84,13 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
 
   # create inverse-CDF
-  qfun <- approxfun(x = pfun(x), y = x, yleft = support[1], yright = support[2]) # if support is NULL than no problem
+  if(is.null(qfun_method)) {
+    qfun <- approxfun(x = pfun(x), y = x, yleft = support[1], yright = support[2]) # if support is NULL than no problem
+  } else {
+    if(!is.function(qfun_method)) stop("qfun_method must be a (quantile) function.")
+    qfun <- function(v) qfun_method(x, probs = v)
+    # quantile
+  }
   # # curve(qfun,0,1)
   ### not needed:
   # if(!is.null(support)) {
