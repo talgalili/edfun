@@ -76,10 +76,21 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
 
   # check support is o.k.
 
+  if((length(support) != 2L) | !is.numeric(support)) {
+    warning("support must be a 2d numeric vector. Since it is not, it is ignored.")
+    support <- range(x)
+  } else {
+    x_range <- range(x)
+    if(support[1] > x_range[1] | support[2] < x_range[2]) {
+      warning("The range of x must be within the support. Since it is not, support is ignored.")
+      support <- x_range
+    }
+  }
+
   if(!is.null(support)) {
     if(length(support) != 2L) {
       warning("support must be a 2d numeric vector. Since it is not, it is ignored.")
-      support <- NULL
+      support <- range(x)
     } else {
       x_range <- range(x)
       if(support[1] > x_range[1] | support[2] < x_range[2]) {
