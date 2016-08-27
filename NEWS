@@ -1,3 +1,8 @@
+edfun 0.2.0 (2016-08-27)
+==============================
+
+* dfun in edfun now accepts NULL - and will return NULL in such a case. This is useful if using the functions ONLY for creating the CDF and inv-CDF and wanting to save computation time.
+
 edfun 0.1.0 (2016-08-26)
 ==============================
 

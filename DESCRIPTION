@@ -1,8 +1,8 @@
 Package: edfun
 Type: Package
 Title: Creating Empirical Distribution Functions
-Version: 0.1.0
-Date: 2016-08-26
+Version: 0.2.0
+Date: 2016-08-27
 Authors@R: c(person("Tal", "Galili", role = c("aut", "cre", "cph"), email =
     "tal.galili@gmail.com", comment = "https://www.r-statistics.com"))
 Depends:

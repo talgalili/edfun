@@ -38,6 +38,7 @@
 #' This is used in qfun to decide how to work with extreme cases of q->0|1.
 #' @param dfun a density function. If supplied, this
 #' creates a different pfun (which now relies on \link{integrate}) and rfun (which will now rely on inv-CDF(U[0,1])).
+#' If missing, then it is created using \link{density}. If NULL then it is not created.
 #' @param qfun_method can get a quantile function to use (for example "quantile"),
 #' with the first parameter accepts the data (x) and the second accepts probs (numeric vector of probabilities with values in [0,1]).
 #' If it is NULL (the default) then the quantiles are estimated using \link{approxfun} from
@@ -81,7 +82,7 @@
 #'
 #'
 edfun <- function(x, support = range(x), # c(-Inf, Inf),
-                  dfun = NULL,
+                  dfun,
                   qfun_method = NULL,
                   ...) {
 
@@ -100,12 +101,15 @@ edfun <- function(x, support = range(x), # c(-Inf, Inf),
   }
 
   # check density is o.k.
-  if(!is.null(dfun) & !is.function(dfun)) stop("density must either be NULL or a function.")
+  # if(!is.null(dfun) & !is.function(dfun)) stop("density must either be NULL or a function.")
 
-  dfun_by_user <- is.function(dfun) # did the user input dfun?
+  dfun_by_user <- !missing(dfun) # is.function(dfun) # did the user input dfun?
 
   # create density - dfun
   if(dfun_by_user) {
+    # check density is o.k.
+    if(!(is.function(dfun) | is.null(dfun))) warning("dfun should either be missing, or a function, or NULL.")
+    dfun_by_user <- is.function(dfun) # If a function was provided, then no problem. If not, then the dfun was not really provided by the user.
     # dfun <- dfun # redundent
   } else {
     density_x <- density(x)

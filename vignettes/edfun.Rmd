@@ -124,6 +124,23 @@ new_x <- x_dist$rfun(1000)
 hist(new_x)
 ```
 
+If `dfun` is `NULL` then it is just returned as `NULL`. This is useful if using the functions ONLY for creating the CDF and inv-CDF and wanting to save computation time.
+
+```{r}
+
+set.seed(123)
+x <- rnorm(1000)
+x_dist <- edfun(x, dfun = NULL)
+
+x_dist$dfun
+
+# but this still works just fine:
+f <- x_dist$pfun
+curve(f, -2,2)
+f <- x_dist$qfun
+curve(f, 0,1)
+
+```
 
 
 If it is known, we can specifically define the support:
