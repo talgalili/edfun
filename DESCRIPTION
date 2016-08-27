@@ -12,7 +12,7 @@ Imports:
 Suggests:
     knitr,
     rmarkdown
-Description: Creating empirical distribution functions from data: dfun, pfun,
+Description: Easily creating empirical distribution functions from data: dfun, pfun,
     qfun and rfun.
 VignetteBuilder: knitr
 License: GPL-2 | GPL-3
