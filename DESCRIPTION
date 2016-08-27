@@ -13,6 +13,7 @@ Suggests:
     knitr,
     rmarkdown,
     distr,
+    spd,
     microbenchmark
 Description: Easily creating empirical distribution functions from data: 'dfun', 'pfun',
     'qfun' and 'rfun'.

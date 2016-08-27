@@ -1,7 +1,7 @@
 edfun 0.3.0 (2016-08-27)
 ==============================
 
-* Vignette - added speed comparison with `distr`
+* Vignette - added speed comparison with `distr` and `spd`.
 
 edfun 0.2.0 (2016-08-27)
 ==============================

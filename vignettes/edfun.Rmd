@@ -303,6 +303,9 @@ Speed comparisons
 
 ```{r, eval = FALSE}
 
+# A nice tutorial on the distr family of packages
+# https://cran.r-project.org/web/packages/distrDoc/vignettes/distr.pdf
+
 library(distr)
 
 ddoublex <- function (x, mu = 0, lambda = 1) {
@@ -342,6 +345,44 @@ microbenchmark(distr = q(my_dist)(0.5), edfun = x_dist$qfun(0.5))
 
 ```
 
+Comparing to the `spd` R package
+
+```{r, eval = FALSE}
+
+set.seed(123)
+x <- rnorm(1000)
+library(edfun)
+x_dist <- edfun(x)
+
+f <- x_dist$dfun
+curve(f, -2,2)
+
+
+library(spd)
+fit <- spdfit(x)
+
+library(microbenchmark)
+microbenchmark(edfun = x_dist$dfun(0), spd = dspd(0, fit))
+# Unit: microseconds
+#   expr       min        lq        mean   median         uq       max neval cld
+#  edfun     2.173     3.104     6.54647     8.07     8.8465    18.313   100  a 
+#    spd 15690.458 18262.183 20566.08416 18914.78 19625.1010 85231.180   100   b
+
+microbenchmark(edfun = x_dist$pfun(0.5), spd = pspd(0.5, fit))
+# Unit: microseconds
+#   expr     min       lq      mean  median       uq     max neval cld
+#  edfun   1.552   2.1730   4.12237   3.725   4.1905  66.424   100  a 
+#    spd 234.344 246.4495 260.13406 251.570 267.5560 421.818   100   b
+
+
+microbenchmark(edfun = x_dist$qfun(0), spd = qspd(0, fit))
+# Unit: microseconds
+#   expr     min       lq      mean  median       uq      max neval cld
+#  edfun   1.553   2.4840   3.70962   4.035   4.3460   18.314   100  a 
+#    spd 255.140 266.6245 292.00170 271.435 292.3865 1354.847   100   b
+
+   
+```
 
 
 
