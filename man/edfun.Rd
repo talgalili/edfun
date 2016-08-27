@@ -36,6 +36,10 @@ Instead, pfun will pre-compute pfun_integrate_dfun on all values of x.
 
 Each component is a function to perform the usual tasks of distributions.
 }
+\description{
+A function for creating a set of (one dimensional) empirical distribution functions (density, CDF, inv-CDF, and random number generator).
+This is either based on a vector of observations from the distribution, or a density function.
+}
 \examples{
 
 set.seed(2016-08-18)

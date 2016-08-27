@@ -29,6 +29,11 @@
 
 #' @title Creating Empirical Distribution Functions
 #' @export
+#'
+#' @description
+#' A function for creating a set of (one dimensional) empirical distribution functions (density, CDF, inv-CDF, and random number generator).
+#' This is either based on a vector of observations from the distribution, or a density function.
+#'
 #' @param x numeric vector of data or (in case density is not NULL) a sequance of values
 #' for which to evaluate the density function for creating the inv-CDF.
 #' Also, the rfun will be based on the inverse CDF on uniform distribution (inv-CDF(U[0,1]) -
