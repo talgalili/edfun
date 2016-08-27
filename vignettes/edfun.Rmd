@@ -297,6 +297,54 @@ hist(new_x)
 
 
 
+Speed comparisons
+--------------------------------------
+
+
+```{r, eval = FALSE}
+
+library(distr)
+
+ddoublex <- function (x, mu = 0, lambda = 1) {
+  exp(-abs(x - mu)/lambda)/(2 * lambda)  
+}
+
+my_dist <- AbscontDistribution(d=ddoublex)
+curve(d(my_dist)(x),-2,2)
+curve(p(my_dist)(x),-2,2)
+curve(q(my_dist)(x),0,1)
+hist(r(my_dist)(1000))
+
+library(edfun)
+
+x <- seq(-4,4, length.out = 1e3)
+x_dist <- edfun(x, dfun = ddoublex)
+f <- x_dist$pfun
+curve(f, -4,4)
+
+library(microbenchmark)
+microbenchmark(distr = p(my_dist)(0), edfun = x_dist$pfun(0))
+
+# > microbenchmark(distr = p(my_dist)(0), edfun = x_dist$pfun(0))
+# Unit: microseconds
+#   expr   min    lq    mean median    uq    max neval cld
+#  distr 5.588 6.518 8.56095  6.829 7.450 63.010   100   b
+#  edfun 1.552 1.863 2.70703  2.173 2.484 15.831   100  a 
+
+library(microbenchmark)
+microbenchmark(distr = q(my_dist)(0.5), edfun = x_dist$qfun(0.5))
+
+# Unit: microseconds
+#   expr    min     lq     mean median     uq     max neval cld
+#  distr 26.694 27.935 33.55964 28.867 30.108 104.601   100   b
+#  edfun  1.552  1.863  2.63255  2.174  2.639  18.314   100  a 
+ 
+
+```
+
+
+
+
 
 Contact
 ============
